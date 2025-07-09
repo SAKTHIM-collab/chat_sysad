@@ -1,0 +1,14 @@
+# .gitignore
+__pycache__/
+*.pyc
+.env
+venv/
+.DS_Store
+node_modules/ # If you ever add JS components
+*.log
+.pytest_cache/
+.dockerignore # Already copied inside the image, no need to push
+
+# Ignore Docker Compose local state (optional, but good practice)
+.docker/
+.project_config/

@@ -1,0 +1,7 @@
+FROM python:3.9-slim-buster
+WORKDIR /app
+COPY server/server.py /app/server.py
+COPY db_schema.sql /app/db_schema.sql
+COPY .env /app/.env
+RUN pip install psycopg2-binary
+CMD ["python3", "server.py"]

@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:13
+    container_name: chat_postgres_db
+    environment:
+      POSTGRES_DB: chat_db
+      POSTGRES_USER: chat_user
+      POSTGRES_PASSWORD: chat_pass
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./db_schema.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    restart: always
+
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile.server
+    container_name: chat_server
+    environment:
+      DATABASE_URL: "dbname=chat_db user=chat_user password=chat_pass host=db port=5432"
+    ports:
+      - "65432:65432"
+    depends_on:
+      - db
+    restart: always
+
+volumes:
+  db_data:
