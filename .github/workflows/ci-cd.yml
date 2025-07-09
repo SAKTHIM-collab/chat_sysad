@@ -31,18 +31,31 @@ jobs:
             ${{ secrets.DOCKER_USERNAME }}/chat-server:latest
             ${{ secrets.DOCKER_USERNAME }}/chat-server:${{ github.sha }}
 
-      - name: Deploy to Server (Placeholder - for actual deployment, use SSH or similar)
-        run: |
-          echo "Simulating deployment to a server..."
-          echo "This step would typically involve SSH'ing into your server and running scripts/deploy.sh"
-          echo "For example: ssh user@your_server_ip 'cd /path/to/chat_system && ./scripts/deploy.sh'"
-          # Example using SSH:
-          # - uses: appleboy/ssh-action@master
-          #   with:
-          #     host: ${{ secrets.SSH_HOST }}
-          #     username: ${{ secrets.SSH_USERNAME }}
-          #     key: ${{ secrets.SSH_PRIVATE_KEY }}
-          #     script: |
-          #       cd /path/to/your/chat_system_repo
-          #       git pull origin main
-          #       ./scripts/deploy.sh
+      - name: Deploy to Server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            # Ensure you are in the correct directory on your server.
+            # This assumes your repository is cloned here.
+            # If you clone to /home/yourusername/chat_system, use that path.
+            # IMPORTANT: Adjust this path to match where your repo will be on the server
+            # A good practice is to clone it once manually, then use that path.
+            DEPLOY_PATH="/home/${{ secrets.SSH_USERNAME }}/chat_system" # Example path, adjust as needed
+
+            # Create the directory if it doesn't exist
+            mkdir -p $DEPLOY_PATH
+            cd $DEPLOY_PATH
+
+            # Pull the latest changes from your GitHub repository
+            # This requires Git to be installed on your server
+            # And the SSH key used for deployment must also have read access to your GitHub repo
+            git pull origin main
+
+            # Make the deploy script executable if it isn't already
+            chmod +x ./scripts/deploy.sh
+
+            # Execute the deployment script
+            ./scripts/deploy.sh
